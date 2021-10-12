@@ -4,8 +4,6 @@ let requestingStart = 0
 let newPixelGrid: number[] = []
 let currentPixelGrid: number[] = []
 let index = 0
-let xOffset = 0
-let yOffset = 0
 let friendAliveCount = 0
 let aCount = 0
 let startingLifeID = 0
@@ -42,8 +40,7 @@ function draw (pixelGrid: any[]) {
             }
         }
     }
-    music.playTone(262, music.beat(BeatFraction.Whole))
-    music.rest(music.beat(BeatFraction.Whole))
+    music.rest(music.beat(BeatFraction.Breve))
 }
 function gridFromPlot () {
     currentPixelGrid = []
@@ -60,8 +57,7 @@ function gridFromPlot () {
     return currentPixelGrid
 }
 function testDebugging () {
-    xOffset = 2
-    yOffset = 3
+	
 }
 function shouldBeAlive (pixelGrid: any[], x: number, y: number) {
     friendAliveCount = getAliveNeighbourCount(pixelGrid, x, y)
@@ -127,10 +123,10 @@ function getAliveNeighbourCount (pixelGrid: any[], x: number, y: number) {
     return aliveNeighbourCount
 }
 function arrayOffset (x: number, y: number) {
-    if (0 > x || 24 < x) {
+    if (0 > x || 4 < x) {
         return -1
     }
-    if (0 > y || 24 < y) {
+    if (0 > y || 4 < y) {
         return -1
     }
     return safeOffset(x) + 5 * safeOffset(y)
@@ -162,8 +158,8 @@ function randomLife () {
 basic.forever(function () {
     startingLife()
     currentPixelGrid = gridFromPlot()
-    soundExpression.soaring.play()
     draw(currentPixelGrid)
+    soundExpression.soaring.play()
     testDebugging()
     generations = 0
     startNewGeneration = 0
@@ -181,7 +177,9 @@ basic.forever(function () {
     } else {
         soundExpression.sad.play()
         basic.showIcon(IconNames.Skull)
-        control.waitForEvent(requestingStart, 1)
-        control.waitMicros(1000)
+        while (requestingStart == 0) {
+            control.waitForEvent(requestingStart, 1)
+            control.waitMicros(1000)
+        }
     }
 })
